@@ -54,10 +54,11 @@ class MyFormView(SimpleFormView):
         # post process form
         flash(self.message, 'info')
 
-
-
 class resources_availability_model_view(ModelView):
     datamodel = SQLAInterface(resources_availability)
+    
+    # label_columns = { 'resource_name' : 'resource name'}
+    # list_columns = [ 'comments', 'start_time', 'end_time', 'resource_name']
 
 class resources_booking_model_view(ModelView):
     datamodel = SQLAInterface(resources_booking)
@@ -75,29 +76,30 @@ class projects_model_view(ModelView):
     related_views = [
             resources_model_view,
             ]
-    
-    
-appbuilder.add_view(MyView, "Method1", category='My View')
-appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
-appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
-# FORM Submit
-appbuilder.add_view(MyFormView, "My form View", icon="fa-group", \
-        label=_('My form View'), \
-        category="My Forms", \
-        category_icon="fa-cogs")
+
+#
+#appbuilder.add_view(MyView, "Method1", category='My View')
+#appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
+#appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
+## FORM Submit
+#appbuilder.add_view(MyFormView, "My form View", icon="fa-group", \
+#        label=_('My form View'), \
+#        category="My Forms", \
+#        category_icon="fa-cogs")
 
 
-class GroupModelView(ModelView):
-    datamodel = SQLAInterface(ContactGroup)
-    # related_views = [ContactModelView]
-
+#class GroupModelView(ModelView):
+#    datamodel = SQLAInterface(ContactGroup)
+#    # related_views = [ContactModelView]
+#
 
 db.create_all()
-appbuilder.add_view(GroupModelView, "List Groups",
-    icon = "fa-folder-open-o",
-    category = "Contacts",
-    category_icon = "fa-envelope")
-
+#
+#appbuilder.add_view(GroupModelView, "List Groups",
+#    icon = "fa-folder-open-o",
+#    category = "Contacts",
+#    category_icon = "fa-envelope")
+#
 appbuilder.add_view(projects_model_view, "Projects", 
     icon="fa-folder-open",
     category="Projects")

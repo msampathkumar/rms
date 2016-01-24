@@ -30,7 +30,7 @@ class resources(Model):
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey('projects.id'))
     name =  Column(String(150), unique = True, nullable=False)
-    description =  Column(String(500), unique = True, nullable=False)
+    description =  Column(String(500), nullable=True)
     
     # relation ship
     project_name = relationship("projects")
@@ -41,8 +41,9 @@ class resources(Model):
 class resources_availability(Model):
     id = Column(Integer, primary_key=True)
     resource_id = Column(Integer, ForeignKey('resources.id'))
-    start_time = DateTime()
-    end_time =DateTime()
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
+    comments = Column(String(500), nullable=True)
 
     # relationship
     resource_name = relationship('resources')
@@ -53,8 +54,9 @@ class resources_availability(Model):
 class resources_booking(Model):
     id = Column(Integer, primary_key=True)
     resource_id = Column(Integer, ForeignKey('resources.id'))
-    start_time = DateTime()
-    end_time =DateTime()
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
+    comments = Column(String(500), nullable=True)
 
     # relationship
     resource_name = relationship('resources')
