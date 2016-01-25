@@ -42,6 +42,13 @@ class MyView(BaseView):
         self.update_redirect()
         return self.render_template('method3.html',param1=param1)
 
+
+    @expose('/method4/')
+    @has_access
+    def method4(self):
+        self.update_redirect()
+        return self.render_template('old_new.html')
+
 class MyFormView(SimpleFormView):
     form = MyForm
     form_title = 'This is my first form view'
@@ -77,17 +84,18 @@ class projects_model_view(ModelView):
             resources_model_view,
             ]
 
-#
-#appbuilder.add_view(MyView, "Method1", category='My View')
-#appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
-#appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
+
+appbuilder.add_view(MyView, "Method1", category='My View')
+appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
+appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
+appbuilder.add_link("Method4", href='/myview/method4', category='My View')
 ## FORM Submit
 #appbuilder.add_view(MyFormView, "My form View", icon="fa-group", \
 #        label=_('My form View'), \
 #        category="My Forms", \
 #        category_icon="fa-cogs")
-
-
+#
+#
 #class GroupModelView(ModelView):
 #    datamodel = SQLAInterface(ContactGroup)
 #    # related_views = [ContactModelView]
