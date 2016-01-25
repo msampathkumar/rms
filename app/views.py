@@ -47,7 +47,7 @@ class MyView(BaseView):
     @has_access
     def method4(self):
         self.update_redirect()
-        return self.render_template('old_new.html')
+        return self.render_template('new.html')
 
 class MyFormView(SimpleFormView):
     form = MyForm
