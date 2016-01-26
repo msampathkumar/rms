@@ -14,24 +14,38 @@ from models import ContactGroup
 from models import projects, resources
 from models import resources_availability, resources_booking
 
+
+def get_calendar_data(model_name):
+    db_data = db.session.query(model_name).all()
+    data = [
+            (item.id,'', \
+                item.start_time.strftime("%Y-%m-%dT%H:%M:%S"), \
+                item.end_time.strftime("%Y-%m-%dT%H:%M:%S"), \
+                '#257e4a', # color
+                ) \
+            for item in db_data]
+    return data
+
 class MyView(BaseView):
 
-    default_view = 'method1'
+    default_view = 'availability'
 
-    @expose('/method1/')
+    @expose('/availability/<int:project_id>')
     @has_access
-    def method1(self):
-        # do something with param1
-        # and return to previous page or index
-        return 'Hello'
+    def availability(self, project_id):
+        # To know Project resources - Availability
+        return self.render_template('test.html',
+                cal_header='project(%r) Resource Availability Chart' % project_id,
+                cal_data=get_calendar_data(resources_availability))
 
-    @expose('/method2/<string:param1>')
+    @expose('/method2/<int:project_id>')
     @has_access
-    def method2(self, param1):
-        # do something with param1
-        # and render template with param
-        param1 = 'Goodbye %s' % (param1)
-        return param1
+    def method2(self, project_id):
+        # Requests for a Project resources
+        param1 = 'Goodbye %s' % (project_id)
+        return self.render_template('test.html',
+                cal_header='project(%r) Resource Request/Booking Chart' % project_id,
+                cal_data=get_calendar_data(resources_booking))
 
     @expose('/method3/<string:param1>')
     @has_access
@@ -42,12 +56,26 @@ class MyView(BaseView):
         self.update_redirect()
         return self.render_template('method3.html',param1=param1)
 
-
     @expose('/method4/')
     @has_access
     def method4(self):
         self.update_redirect()
         return self.render_template('new.html')
+
+    @expose('/method5/')
+    @has_access
+    def method5(self):
+        self.update_redirect()
+        test_data = [
+                # 
+                ('title','url','2016-01-12T10:30:00','2016-01-12T11:30:00'),
+                ('title','url','2016-01-12T10:30:00','2016-01-12T12:30:00'),
+                ('title','url','2016-01-12T11:30:00','2016-01-12T12:30:00'),
+                ]
+        return self.render_template('test.html', 
+                cal_header='test page',
+                cal_data=test_data)
+
 
 class MyFormView(SimpleFormView):
     form = MyForm
@@ -85,10 +113,12 @@ class projects_model_view(ModelView):
             ]
 
 
-appbuilder.add_view(MyView, "Method1", category='My View')
-appbuilder.add_link("Method2", href='/myview/method2/john', category='My View')
+appbuilder.add_view(MyView, "availability", href='/myview/availability/12', category='My View')
+appbuilder.add_link("Method2", href='/myview/method2/001', category='My View')
 appbuilder.add_link("Method3", href='/myview/method3/john', category='My View')
 appbuilder.add_link("Method4", href='/myview/method4', category='My View')
+appbuilder.add_link("Method5", href='/myview/method5', category='My View')
+
 ## FORM Submit
 #appbuilder.add_view(MyFormView, "My form View", icon="fa-group", \
 #        label=_('My form View'), \

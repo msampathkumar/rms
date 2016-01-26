@@ -1,83 +1,80 @@
+{% extends 'appbuilder/baselayout.html' %}
 
-{% extends "appbuilder/base.html" %}
-{% block content %}
-
-<script>
-$.getScript('http://arshaw.com/js/fullcalendar-1.6.4/fullcalendar/fullcalendar.min.js',function(){
-
-  var date = new Date();
-  var d = date.getDate();
-  var m = date.getMonth();
-  var y = date.getFullYear();
-  
-  $('#calendar').fullCalendar({
-    header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'month,agendaWeek,agendaDay'
-    },
-    editable: true,
-    events: [
-      {
-        title: 'All Day Event',
-        start: new Date(y, m, 1)
-      },
-      {
-        title: 'Long Event',
-        start: new Date(y, m, d-5),
-        end: new Date(y, m, d-2)
-      },
-      {
-        id: 999,
-        title: 'Repeating Event',
-        start: new Date(y, m, d-3, 16, 0),
-        allDay: false
-      },
-      {
-        id: 999,
-        title: 'Repeating Event',
-        start: new Date(y, m, d+4, 16, 0),
-        allDay: false
-      },
-      {
-        title: 'Meeting',
-        start: new Date(y, m, d, 10, 30),
-        allDay: false
-      },
-      {
-        title: 'Lunch',
-        start: new Date(y, m, d, 12, 0),
-        end: new Date(y, m, d, 14, 0),
-        allDay: false
-      },
-      {
-        title: 'Birthday Party',
-        start: new Date(y, m, d+1, 19, 0),
-        end: new Date(y, m, d+1, 22, 30),
-        allDay: false
-      },
-      {
-        title: 'Click for Google',
-        start: new Date(y, m, 28),
-        end: new Date(y, m, 29),
-        url: 'http://google.com/'
-      }
-    ]
-  });
-})
-
-</script>
-
-<h1>
-    Hai there, how are you doing today ?
-    
-</h1>
-
-<div class="container">
- <hr>
-<div id="calendar"></div>
-</div>
-
+{% block head_css %}
+{{ super() }}
+<!--cal css files -->
+<link href="{{url_for('static',filename='css/fullcalendar.css')}}" rel='stylesheet' />
+<link href="{{url_for('static',filename='css/fullcalendar.print.css')}}" rel='stylesheet' media='print'  />
 {% endblock %}
 
 
+{% block head_js %}
+{{ super() }}
+<!--cal js files -->
+<script src="{{url_for('static',filename='js/moment.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/fullcalendar.min.js')}}"></script>
+{% endblock %}
+
+
+
+
+{% block content %}
+<script>
+    $(document).ready(function() {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,basicWeek,basicDay'
+            },
+            defaultDate: '2016-01-12',
+            editable: true,
+            eventLimit: true, // allow "more" link when too many events
+            events: [
+        {% for title,url,start,end,color in cal_data  %}
+            {
+                title: '{{title}}',
+                url: '{{url}}',
+                start: '{{start}}',
+                end: '{{end}}',
+                color: '{{color}}'
+            },
+        {% endfor %}
+            ]
+        });
+    });
+</script>
+
+
+<style>
+    body {
+        margin: 0px 10px;
+        padding: 0;
+        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+        font-size: 14px;
+    }
+    #calendar {
+        max-width: 95%;
+        margin: 0 auto;
+    }
+</style>
+
+<h2> Project :: {{ cal_header|safe }}  </h2>
+<div id='calendar'></div>
+</hr>
+
+<p>hello world !</p>
+<pre>
+{% for title,url,start,end,color in cal_data  %}
+    {
+    title: {{title}}
+    url: {{url}}
+    start: {{start}}
+    end: {{end}}
+    color: {{color}}
+    },
+{% endfor %}
+</pre>
+
+{% endblock %}
