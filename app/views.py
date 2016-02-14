@@ -8,20 +8,19 @@ from flask.ext.appbuilder import ModelView
 from flask.ext.appbuilder.models.sqla.interface import SQLAInterface
 
 from app import db, appbuilder
-from forms import MyForm
 
-from models import ContactGroup
+from models import User
 from models import projects, resources
-from models import resources_availability, resources_booking
+from models import project_users, resources_availability, resources_booking
 
 
-def get_calendar_data(model_name):
+def get_calendar_data(model_name, color_code='#257e4a'):
     db_data = db.session.query(model_name).all()
     data = [
             (item.id,'', \
                 item.start_time.strftime("%Y-%m-%dT%H:%M:%S"), \
                 item.end_time.strftime("%Y-%m-%dT%H:%M:%S"), \
-                '#257e4a', # color
+                color_code, # color
                 ) \
             for item in db_data]
     return data
@@ -50,7 +49,7 @@ class project(BaseView):
         # To know Project resources - Availability
         return self.render_template('test.html',
                 cal_header='project(%r) Resource Availability Chart' % project_id,
-                cal_data=get_calendar_data(resources_availability))
+                cal_data=get_calendar_data(resources_availability, '#257e4a') )
 
     @expose('/bookings/<int:project_id>')
     @has_access
@@ -58,20 +57,23 @@ class project(BaseView):
         # Requests for a Project resources
         return self.render_template('test.html',
                 cal_header='project(%r) Resource Request/Booking Chart' % project_id,
-                cal_data=get_calendar_data(resources_booking))
+                cal_data=get_calendar_data(resources_booking, 'grey'))
 
-    @expose('/method3/<string:param1>')
+    @expose('/help/')
     @has_access
-    def method3(self, param1):
-        param1 = 'Goodbye %s' % (param1)
-        self.update_redirect()
-        return self.render_template('base.html',param1=param1)
+    def help(self):
+        return self.render_template('help.html')
 
-    @expose('/method4/')
+    @expose('/method4/<int:project_id>')
     @has_access
-    def method4(self):
-        self.update_redirect()
-        return self.render_template('new.html')
+    def method4(self, project_id):
+        '''
+        shows supply and demand
+        '''
+        title = 'project(%r) Resource Availability Chart' % project_id
+        data = get_calendar_data(resources_availability, 'green') +\
+                    get_calendar_data(resources_booking, 'grey')
+        return self.render_template('test.html', cal_header=title, cal_data=data)
 
     @expose('/method5/')
     @has_access
@@ -88,26 +90,16 @@ class project(BaseView):
                 cal_data=test_data)
 
 
-class MyFormView(SimpleFormView):
-    form = MyForm
-    form_title = 'This is my first form view'
-    message = 'My form submitted'
-
-    def form_get(self, form):
-        form.field1.data = 'this was pre-filled data'
-
-    def form_post(self, form):
-        # post process form
-        flash(self.message, 'info')
-
 class resources_availability_model_view(ModelView):
     datamodel = SQLAInterface(resources_availability)
     
     # label_columns = { 'resource_name' : 'resource name'}
     # list_columns = [ 'comments', 'start_time', 'end_time', 'resource_name']
 
+
 class resources_booking_model_view(ModelView):
     datamodel = SQLAInterface(resources_booking)
+
 
 class resources_model_view(ModelView):
     datamodel = SQLAInterface(resources)
@@ -116,6 +108,7 @@ class resources_model_view(ModelView):
             resources_booking_model_view,
             ]
 
+
 class projects_model_view(ModelView):
     datamodel = SQLAInterface(projects)
     list_columns = [ 'name', 'description']
@@ -123,27 +116,12 @@ class projects_model_view(ModelView):
             resources_model_view,
             ]
 
-## FORM Submit
-#appbuilder.add_view(MyFormView, "My form View", icon="fa-group", \
-#        label=_('My form View'), \
-#        category="My Forms", \
-#        category_icon="fa-cogs")
-#
-#
-#class GroupModelView(ModelView):
-#    datamodel = SQLAInterface(ContactGroup)
-#    # related_views = [ContactModelView]
-#
+class project_users(ModelView):
+    datamodel = SQLAInterface(project_users)
+
+
 
 db.create_all()
-
-#
-#appbuilder.add_view(GroupModelView, "List Groups",
-#    icon = "fa-folder-open-o",
-#    category = "Contacts",
-#    category_icon = "fa-envelope")
-#
-
 
 
 ################## Tab Menu : Project ##################
@@ -157,8 +135,8 @@ appbuilder.add_view(resources_booking_model_view,'resBooking', icon="fa-folder-o
 appbuilder.add_view(project, "Summary", href='/project/summary/12', category='Check')
 appbuilder.add_link("Availability", href='/project/availability/001', category='Check')
 appbuilder.add_link("Bookings", href='/project/bookings/001', category='Check')
-appbuilder.add_link("Method3", href='/project/method3/john', category='Check')
-appbuilder.add_link("Method4", href='/project/method4', category='Check')
+appbuilder.add_link("Help", href='/project/help/', category='Check')
+appbuilder.add_link("Method4", href='/project/method4/12', category='Check')
 appbuilder.add_link("Method5", href='/project/method5', category='Check')
 
 

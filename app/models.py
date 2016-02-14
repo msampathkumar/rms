@@ -2,6 +2,9 @@ from flask.ext.appbuilder import Model
 from flask.ext.appbuilder.models.mixins import AuditMixin, FileColumn, ImageColumn
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+
+from flask_appbuilder.security.sqla.models import User
+
 """
 
 You can use the extra Flask-AppBuilder fields and Mixin's
@@ -24,7 +27,29 @@ class projects(Model):
     description =  Column(String(500), unique = True, nullable=False)
 
     def __repr__(self):
-        return 'Project:%r' % self.name
+        return 'Project:%s' % self.name
+
+
+class app_user(User):
+    # link user_projects here
+    project_id = Column(Integer, ForeignKey('projects.id'))
+    # relationship
+    project_name = relationship("projects")
+
+
+class project_users(AuditMixin, Model):
+    id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey('projects.id'))
+    #user_ids = Column(Integer, ForeignKey('User.id'))
+    description =  Column(String(500), unique = True, nullable=False)
+
+    # relationship
+    project_name = relationship("projects")
+    #user_name = relationship("User")
+
+    def __repr__(self):
+        return '%s:%s' % (project_id, user_id)
+
 
 class resources(Model):
     id = Column(Integer, primary_key=True)
@@ -36,7 +61,7 @@ class resources(Model):
     project_name = relationship("projects")
 
     def __repr__(self):
-        return '%s:%r' % (self.project_name, self.name)
+        return '%s:%s' % (self.project_name, self.name)
 
 class resources_availability(Model):
     id = Column(Integer, primary_key=True)
@@ -49,7 +74,7 @@ class resources_availability(Model):
     resource_name = relationship('resources')
 
     def __repr__(self):
-        return '<resources_availability id:%r>' % self.id
+        return 'ResourceAvailability:%s' % self.id
 
 class resources_booking(Model):
     id = Column(Integer, primary_key=True)
@@ -62,6 +87,6 @@ class resources_booking(Model):
     resource_name = relationship('resources')
 
     def __repr__(self):
-        return '<resources_booking id:%r>' % self.id
+        return 'ResourcesBooking id:%r>' % self.id
 
 

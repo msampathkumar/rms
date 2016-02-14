@@ -1,7 +1,8 @@
 *.pyc
-app.db
+*.db
 ./tmp
 ./build/*
+.idea*
 ./.idea
 ./.idea/*
 env
