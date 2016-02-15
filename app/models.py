@@ -1,6 +1,6 @@
 from flask.ext.appbuilder import Model
-from flask.ext.appbuilder.models.mixins import AuditMixin, FileColumn, ImageColumn
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from flask.ext.appbuilder.models.mixins import AuditMixin
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table
 from sqlalchemy.orm import relationship
 
 from flask_appbuilder.security.sqla.models import User
@@ -13,15 +13,8 @@ AuditMixin will add automatic timestamp of created and modified by who
 
 
 """
-class ContactGroup(Model):
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), unique = True, nullable=False)
 
-    def __repr__(self):
-        return self.name
-
-
-class projects(Model):
+class projects_model(Model):
     id = Column(Integer, primary_key=True)
     name =  Column(String(150), unique = True, nullable=False)
     description =  Column(String(500), unique = True, nullable=False)
@@ -30,63 +23,48 @@ class projects(Model):
         return 'Project:%s' % self.name
 
 
-class app_user(User):
-    # link user_projects here
-    project_id = Column(Integer, ForeignKey('projects.id'))
-    # relationship
-    project_name = relationship("projects")
-
-
-class project_users(AuditMixin, Model):
+class resources_model(Model):
     id = Column(Integer, primary_key=True)
-    project_id = Column(Integer, ForeignKey('projects.id'))
-    #user_ids = Column(Integer, ForeignKey('User.id'))
-    description =  Column(String(500), unique = True, nullable=False)
-
-    # relationship
-    project_name = relationship("projects")
-    #user_name = relationship("User")
-
-    def __repr__(self):
-        return '%s:%s' % (project_id, user_id)
-
-
-class resources(Model):
-    id = Column(Integer, primary_key=True)
-    project_id = Column(Integer, ForeignKey('projects.id'))
+    project_id = Column(Integer, ForeignKey('projects_model.id'))
     name =  Column(String(150), unique = True, nullable=False)
     description =  Column(String(500), nullable=True)
     
-    # relation ship
-    project_name = relationship("projects")
+    # relationship
+    project_name = relationship("projects_model")
 
     def __repr__(self):
         return '%s:%s' % (self.project_name, self.name)
 
-class resources_availability(Model):
+class resources_availability_model(Model):
     id = Column(Integer, primary_key=True)
-    resource_id = Column(Integer, ForeignKey('resources.id'))
+    resource_id = Column(Integer, ForeignKey('resources_model.id'))
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     comments = Column(String(500), nullable=True)
 
     # relationship
-    resource_name = relationship('resources')
+    resource_name = relationship('resources_model')
 
     def __repr__(self):
         return 'ResourceAvailability:%s' % self.id
 
-class resources_booking(Model):
+class resources_booking_model(Model):
     id = Column(Integer, primary_key=True)
-    resource_id = Column(Integer, ForeignKey('resources.id'))
+    resource_id = Column(Integer, ForeignKey('resources_model.id'))
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     comments = Column(String(500), nullable=True)
 
     # relationship
-    resource_name = relationship('resources')
+    resource_name = relationship('resources_model')
 
     def __repr__(self):
-        return 'ResourcesBooking id:%r>' % self.id
+        return 'resources_model Booking id:%r>' % self.id
 
 
+class project_users_model(Model):
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('ab_user.id'), nullable=False)
+    user_name = relationship("User")
+    project_id = Column(Integer, ForeignKey('projects_model.id'), nullable=False)
+    project_name = relationship("projects_model")

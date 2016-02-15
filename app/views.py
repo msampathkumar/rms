@@ -9,9 +9,13 @@ from flask.ext.appbuilder.models.sqla.interface import SQLAInterface
 
 from app import db, appbuilder
 
-from models import User
-from models import projects, resources
-from models import project_users, resources_availability, resources_booking
+from models import projects_model, resources_model
+from models import project_users_model, resources_availability_model, resources_booking_model
+
+
+#
+#  Custome views/reports
+#
 
 
 def get_calendar_data(model_name, color_code='#257e4a'):
@@ -25,12 +29,13 @@ def get_calendar_data(model_name, color_code='#257e4a'):
             for item in db_data]
     return data
 
+
 class project(BaseView):
 
     default_view = 'summary'
 
     @expose('/summary/<int:project_id>')
-    @has_access
+    # @has_access
     def summary(self, project_id):
         '''
             Showcase Details of project
@@ -44,7 +49,7 @@ class project(BaseView):
         return self.render_template('base.html',param1='project id : %s' % project_id)
 
     @expose('/availability/<int:project_id>')
-    @has_access
+    # @has_access
     def availability(self, project_id):
         # To know Project resources - Availability
         return self.render_template('test.html',
@@ -52,7 +57,7 @@ class project(BaseView):
                 cal_data=get_calendar_data(resources_availability, '#257e4a') )
 
     @expose('/bookings/<int:project_id>')
-    @has_access
+    # @has_access
     def bookings(self, project_id):
         # Requests for a Project resources
         return self.render_template('test.html',
@@ -60,12 +65,12 @@ class project(BaseView):
                 cal_data=get_calendar_data(resources_booking, 'grey'))
 
     @expose('/help/')
-    @has_access
+    # @has_access
     def help(self):
         return self.render_template('help.html')
 
     @expose('/method4/<int:project_id>')
-    @has_access
+    # @has_access
     def method4(self, project_id):
         '''
         shows supply and demand
@@ -76,7 +81,7 @@ class project(BaseView):
         return self.render_template('test.html', cal_header=title, cal_data=data)
 
     @expose('/method5/')
-    @has_access
+    # @has_access
     def method5(self):
         self.update_redirect()
         test_data = [
@@ -90,45 +95,47 @@ class project(BaseView):
                 cal_data=test_data)
 
 
-class resources_availability_model_view(ModelView):
-    datamodel = SQLAInterface(resources_availability)
-    
-    # label_columns = { 'resource_name' : 'resource name'}
-    # list_columns = [ 'comments', 'start_time', 'end_time', 'resource_name']
+#
+#  Table/Model views
+#
+
+class resources_availability(ModelView):
+    datamodel = SQLAInterface(resources_availability_model)
 
 
-class resources_booking_model_view(ModelView):
-    datamodel = SQLAInterface(resources_booking)
+class resources_booking(ModelView):
+    datamodel = SQLAInterface(resources_booking_model)
 
 
-class resources_model_view(ModelView):
-    datamodel = SQLAInterface(resources)
+class resources(ModelView):
+    datamodel = SQLAInterface(resources_model)
     related_views = [
-            resources_availability_model_view,
-            resources_booking_model_view,
+            resources_availability,
+            resources_booking,
             ]
 
 
-class projects_model_view(ModelView):
-    datamodel = SQLAInterface(projects)
+class projects(ModelView):
+    datamodel = SQLAInterface(projects_model)
     list_columns = [ 'name', 'description']
     related_views = [
-            resources_model_view,
+            resources,
             ]
 
-class project_users(ModelView):
-    datamodel = SQLAInterface(project_users)
 
+class project_users(ModelView):
+    datamodel = SQLAInterface(project_users_model)
 
 
 db.create_all()
 
 
 ################## Tab Menu : Project ##################
-appbuilder.add_view(projects_model_view, "Projects", icon="fa-folder-open", category="Projects")
-appbuilder.add_view(resources_model_view, "Resources", icon="fa-folder-open-o", category="Projects")
-appbuilder.add_view(resources_availability_model_view,'resAvail', icon="fa-folder-open-o", category="Projects")
-appbuilder.add_view(resources_booking_model_view,'resBooking', icon="fa-folder-open-o", category="Projects")
+appbuilder.add_view(project_users, "project_users", icon="fa-folder-open", category="project_users")
+appbuilder.add_view(projects, "Projects", icon="fa-folder-open", category="Projects")
+appbuilder.add_view(resources, "Resources", icon="fa-folder-open-o", category="Projects")
+appbuilder.add_view(resources_availability,'resAvail', icon="fa-folder-open-o", category="Projects")
+appbuilder.add_view(resources_booking,'resBooking', icon="fa-folder-open-o", category="Projects")
 
 
 ################## Tab Menu : Check ##################
