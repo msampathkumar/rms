@@ -96,12 +96,13 @@ def create_test_resources():
 
 def create_test_resources_avail():
   #
-  for month in range(1, 3):
-    for date in range(1, 5):
+  
+  for res in session.query(resources_model).all():
+    for date in range(1, 10):
       for time in range(9, 11):
-        start = datetime.datetime(2016, 1, date, time )
-        end  = datetime.datetime(2016, 1, date, time + 5 )
-        for res in session.query(resources_model).all():
+        for month in range(1, 3):
+          start = datetime.datetime(2016, month, date, time )
+          end  = datetime.datetime(2016, month, date, time + 2 )
           res_avail =  resources_availability_model(resource_id=res.id, start_time=start, end_time=end, comments='test resource' + str(res.id) )
           session.add(res_avail)
   session.commit()
@@ -109,12 +110,12 @@ def create_test_resources_avail():
 
 def create_test_resources_book():
   #
-  for month in range(1,3):
-    for date in range(3, 6):
+  for res in session.query(resources_model).all():
+    for date in range(3, 15):
       for time in range(8, 10):
-        start = datetime.datetime(2016, 1, date, time )
-        end  = datetime.datetime(2016, 1, date, time + 5 )
-        for res in session.query(resources_model).all():
+        for month in range(1, 3):
+          start = datetime.datetime(2016, month, date, time )
+          end  = datetime.datetime(2016, month, date, time + 2 )
           res_avail =  resources_booking_model(resource_id=res.id, start_time=start, end_time=end, comments='test resource' + str(res.id) )
           session.add(res_avail)
   session.commit()

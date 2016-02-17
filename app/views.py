@@ -17,9 +17,13 @@ from models import project_users_model, resources_availability_model, resources_
 #  Custome views/reports
 #
 
+def get_model_data(model_name):
+    return db.session.query(model_name).all()
+
+
 
 def get_calendar_data(model_name, color_code='#257e4a'):
-    db_data = db.session.query(model_name).all()
+    db_data = get_model_data(model_name)
     data = [
             (item.id,'', \
                 item.start_time.strftime("%Y-%m-%dT%H:%M:%S"), \
@@ -32,7 +36,16 @@ def get_calendar_data(model_name, color_code='#257e4a'):
 
 class project(BaseView):
 
-    default_view = 'summary'
+    default_view = 'all_projects'
+
+    @expose('/all')
+    # @has_access
+    def all_projects(self):
+        '''
+        Links to all projects
+        '''
+        data = get_model_data(projects_model)
+        return self.render_template('projects.html',param1=data)
 
     @expose('/summary/<int:project_id>')
     # @has_access
@@ -46,7 +59,10 @@ class project(BaseView):
             * Users tagged for resource
             * Requests details
         '''
-        return self.render_template('base.html',param1='project id : %s' % project_id)
+        return self.render_template('project_details.html',
+            project={},
+            users_list=[],
+            resources_list=[])
 
     @expose('/availability/<int:project_id>')
     # @has_access
@@ -131,20 +147,21 @@ db.create_all()
 
 
 ################## Tab Menu : Project ##################
-appbuilder.add_view(project_users, "project_users", icon="fa-folder-open", category="project_users")
-appbuilder.add_view(projects, "Projects", icon="fa-folder-open", category="Projects")
-appbuilder.add_view(resources, "Resources", icon="fa-folder-open-o", category="Projects")
-appbuilder.add_view(resources_availability,'resAvail', icon="fa-folder-open-o", category="Projects")
-appbuilder.add_view(resources_booking,'resBooking', icon="fa-folder-open-o", category="Projects")
+appbuilder.add_view(projects, "Projects", icon="fa-folder-open", category="Resource_Providers")
+appbuilder.add_view(resources, "Resources", icon="fa-folder-open-o", category="Resource_Providers")
+appbuilder.add_view(project_users, "project_users", icon="fa-folder-open", category="Resource_Providers")
+appbuilder.add_view(resources_availability,'resAvail', icon="fa-folder-open-o", category="Resource_Providers")
+appbuilder.add_view(resources_booking,'resBooking', icon="fa-folder-open-o", category="Resource_Providers")
 
 
 ################## Tab Menu : Check ##################
-appbuilder.add_view(project, "Summary", href='/project/summary/12', category='Check')
-appbuilder.add_link("Availability", href='/project/availability/001', category='Check')
-appbuilder.add_link("Bookings", href='/project/bookings/001', category='Check')
-appbuilder.add_link("Help", href='/project/help/', category='Check')
-appbuilder.add_link("Method4", href='/project/method4/12', category='Check')
-appbuilder.add_link("Method5", href='/project/method5', category='Check')
+appbuilder.add_view(project, "Projects", href='/project/all', category='stakeholders')
+# appbuilder.add_view(project, "Summary", href='/project/summary/12', category='stakeholders') # internal
+# appbuilder.add_link("Availability", href='/project/availability/001', category='stakeholders') # internal
+# appbuilder.add_link("Bookings", href='/project/bookings/001', category='stakeholders') # internal
+appbuilder.add_link("Help", href='/project/help/', category='stakeholders')
+appbuilder.add_link("Method4", href='/project/method4/12', category='stakeholders')
+appbuilder.add_link("Method5", href='/project/method5', category='stakeholders')
 
 
 

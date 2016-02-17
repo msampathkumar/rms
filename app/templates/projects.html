@@ -1,0 +1,20 @@
+{% extends "appbuilder/base.html" %}
+{% block content %}
+
+<!-- starting -->
+<p>
+{% for project in param1  %}
+    <h4>
+      <a href="/project/summary/{{project.id}}" title='Project Page'>
+      Title :{{project.name|title}}</h4>
+      </a>
+    <p>Description : {{project.description}}</p>
+    <a href="/project/summary/{{project.id}}" title='Project Page'>page url</a>
+    <a href="/project/availability/{{project.id}}" title='Project Page'>availability </a>
+    <a href="/project/bookings/{{project.id}}" title='Project Page'>booking</a>
+    </br></br></br>
+{% endfor %}
+</p>
+<!-- ending -->
+
+{% endblock %}

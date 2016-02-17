@@ -17,7 +17,7 @@ AuditMixin will add automatic timestamp of created and modified by who
 class projects_model(Model):
     id = Column(Integer, primary_key=True)
     name =  Column(String(150), unique = True, nullable=False)
-    description =  Column(String(500), unique = True, nullable=False)
+    description =  Column(String(500), nullable=False)
 
     def __repr__(self):
         return 'Project:%s' % self.name

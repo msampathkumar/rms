@@ -1,0 +1,33 @@
+{% extends "appbuilder/base.html" %}
+{% block content %}
+<!-- starting -->
+<!-- project name, description -->
+<h1>{{ project.name|title}}</h1>
+<p>{{ project.description|title}}</p>
+<a href="/project/summary/{{project.id}}" title='Project Page'>page url</a>
+<a href="/project/availability/{{project.id}}" title='Project Page'>availability </a>
+<a href="/project/bookings/{{project.id}}" title='Project Page'>booking</a>
+</br>
+<!-- project users -->
+<div> Project Users:
+{% for user in users_list %}
+  {{ user }}
+{% endfor %}
+</div></br></hl>
+<!-- project resources -->
+<div> Project Resources:
+{% for user in resources_list %}
+  {{ user }}
+{% endfor %}
+</div></br>
+<!-- project availability + demand calendar -->
+<div>
+  * supply_group_by_date_count, demand_group_by_date_count
+</div></br>
+<!-- project statistics -->
+<div>
+  * supply_group_by_date_count, demand_group_by_date_count
+</div></br>
+<!-- ending -->
+
+{% endblock %}
