@@ -9,7 +9,6 @@ Welcome to our resource management tool. As the name defines, this is a another 
 
 For example, say you want to go to brother’s home tomorrow and if you know that all the flights going to LA are full for next 4 days then it would help you think of other ways instead of wasting time. We believe that making (S&D) visible help our customers understand the (S&D) of existing scenario and plan better according to their need.
 
-
 	* make supply and demand(S&D) independent 
 
 In reality, there might be certain cases where there is more demand then supply. For example everybody want to learn about Machine Learning or Leadership or Storytelling session and we want to conduct one. So for resource provider does not know how many want to join the session, so you can think 20 ppl might join and arrange a meet. As you know information passes through various means and modes and 2 days before the meet you have come to know that 50 people want to learn Storytelling session.
