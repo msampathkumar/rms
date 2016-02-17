@@ -54,7 +54,7 @@ class project(BaseView):
         # To know Project resources - Availability
         return self.render_template('test.html',
                 cal_header='project(%r) Resource Availability Chart' % project_id,
-                cal_data=get_calendar_data(resources_availability, '#257e4a') )
+                cal_data=get_calendar_data(resources_availability_model, '#257e4a') )
 
     @expose('/bookings/<int:project_id>')
     # @has_access
@@ -62,7 +62,7 @@ class project(BaseView):
         # Requests for a Project resources
         return self.render_template('test.html',
                 cal_header='project(%r) Resource Request/Booking Chart' % project_id,
-                cal_data=get_calendar_data(resources_booking, 'grey'))
+                cal_data=get_calendar_data(resources_booking_model, 'grey'))
 
     @expose('/help/')
     # @has_access
@@ -76,8 +76,8 @@ class project(BaseView):
         shows supply and demand
         '''
         title = 'project(%r) Resource Availability Chart' % project_id
-        data = get_calendar_data(resources_availability, 'green') +\
-                    get_calendar_data(resources_booking, 'grey')
+        data = get_calendar_data(resources_availability_model, 'green') +\
+                    get_calendar_data(resources_booking_model, 'grey')
         return self.render_template('test.html', cal_header=title, cal_data=data)
 
     @expose('/method5/')
@@ -91,7 +91,7 @@ class project(BaseView):
                 ('title','url','2016-01-12T11:30:00','2016-01-12T12:30:00', ''),
                 ]
         return self.render_template('test.html', 
-                cal_header='test page',
+                cal_header='Test - Calendar page',
                 cal_data=test_data)
 
 
