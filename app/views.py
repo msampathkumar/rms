@@ -18,7 +18,12 @@ from models import project_users_model, resources_availability_model, resources_
 #
 
 def get_model_data(model_name):
+    # fetches all the data in table
     return db.session.query(model_name).all()
+
+def get_model_item(model_name, id=1):
+    # fetches one item as per index id
+    return db.session.query(model_name).filter(model_name.id==id)
 
 
 
@@ -59,8 +64,12 @@ class project(BaseView):
             * Users tagged for resource
             * Requests details
         '''
+
+        project = list(get_model_item(projects_model, project_id))
+        if not project:
+            abort(404)
         return self.render_template('project_details.html',
-            project={},
+            project=project[0], # get selected project
             users_list=[],
             resources_list=[])
 
