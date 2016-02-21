@@ -3,37 +3,53 @@
 <!-- starting -->
 <!-- project name, description -->
 <div class="well">
-<h1>{{ project.name|title}}</h1>
-<p>{{ project.description|title}}</p>
-
+<a href="{{ url_for('project.summary', project_id=project.id) }}" ><h1>{{project.name|title}}</h1></a>
 <p>Description : {{project.description}}</p>
-
 <a href="{{ url_for('project.summary', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Project Home</a>
 <a href="{{ url_for('project.availability', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Availability</a>
 <a href="{{ url_for('project.bookings', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Booking</a>
+</div></br>
 
-</div>
 
 <!-- project users -->
-<div> Project Users:
+<h3>Users:</h3>
+<div class="row">
 {% for user in users_list %}
-  {{ user }}
+<div class="col-sm-4 well"> 
+  ID:{{ user.id }}
+  Firstname:{{ user.first_name }}
+  Lastname :{{ user.last_name }}
+  EMAIL :{{ user.email }}
+  All :{{ user.__dict__ }}
+</div>
 {% endfor %}
-</div></br></hl>
+</div>
+
+
 <!-- project resources -->
-<div> Project Resources:
+<h3>Resources:</h3>
+<div class="row">
 {% for user in resources_list %}
+  <div class="col-sm-4 well"> 
   {{ user }}
+  </div>
 {% endfor %}
-</div></br>
+</div>
+
+
 <!-- project availability + demand calendar -->
-<div>
-  * supply_group_by_date_count, demand_group_by_date_count
-</div></br>
+<h3>Availability + Demand calendar:</h3>
+<div class="row">
+  <p>* supply_group_by_date_count, demand_group_by_date_count # time line graph ## D3 </p>
+</div>
+
+
 <!-- project statistics -->
-<div>
-  * supply_group_by_date_count, demand_group_by_date_count
-</div></br>
+<h3>Project Stats:</h3>
+<div class="row">
+  <p>* supply_group_by_date_count, demand_group_by_date_count</p>
+</div>
+
 <!-- ending -->
 
 {% endblock %}

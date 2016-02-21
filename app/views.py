@@ -9,9 +9,8 @@ from flask.ext.appbuilder.models.sqla.interface import SQLAInterface
 
 from app import db, appbuilder
 
-from models import projects_model, resources_model
+from models import projects_model, resources_model, User
 from models import project_users_model, resources_availability_model, resources_booking_model
-
 
 #
 #  Custome views/reports
@@ -23,7 +22,43 @@ def get_model_data(model_name):
 
 def get_model_item(model_name, id=1):
     # fetches one item as per index id
-    return db.session.query(model_name).filter(model_name.id==id)
+    q = db.session.query(model_name).filter(model_name.id==id).all()
+    if q:
+        return q[0] # id always unique  - only item will be there
+    else:
+        return 
+
+def get_project_item(project_id):
+    return get_model_item(projects_model, project_id)
+
+
+def get_project_users(project_id):
+    data = db.session.query(project_users_model)\
+        .join(User, project_users_model.user_id==User.id)\
+        .add_columns(User.first_name, User.last_name)\
+        .filter(project_users_model.project_id==project_id)\
+        .all()
+    new = []
+    for item, first_name, last_name in data:
+        item.first_name = first_name
+        item.last_name = last_name
+        new.append(new)
+    # data = db.session.query(project_users_model).filter(project_users_model.project_id==project_id).all()
+    # return data
+    return new
+
+def get_project_details(project_id):
+    '''
+    Returns :
+        * project 
+        * project - users
+    '''
+    project = get_model_item(projects_model, project_id)
+    project_users = get_project_users(project_id)
+    return [
+            project, # project object
+            project_users, # project user
+            ]
 
 
 
@@ -43,6 +78,7 @@ class project(BaseView):
 
     default_view = 'all_projects'
 
+    @expose('/')
     @expose('/all')
     # @has_access
     def all_projects(self):
@@ -52,7 +88,7 @@ class project(BaseView):
         data = get_model_data(projects_model)
         return self.render_template('projects.html',param1=data)
 
-    @expose('/summary/<int:project_id>')
+    @expose('/<int:project_id>/summary')
     # @has_access
     def summary(self, project_id):
         '''
@@ -65,28 +101,30 @@ class project(BaseView):
             * Requests details
         '''
 
-        project = list(get_model_item(projects_model, project_id))
+        project, project_users = get_project_details(project_id)
         if not project:
             abort(404)
         return self.render_template('project_details.html',
-            project=project[0], # get selected project
-            users_list=[],
+            project=project, # get selected project
+            users_list=project_users,
             resources_list=[])
-
-    @expose('/availability/<int:project_id>')
+    
+    @expose('/<int:project_id>/availability')
     # @has_access
     def availability(self, project_id):
         # To know Project resources - Availability
-        return self.render_template('test.html',
-                cal_header='project(%r) Resource Availability Chart' % project_id,
+        return self.render_template('calendar.html',
+                project =  get_project_item(project_id),
+                cal_header='Availability Chart',
                 cal_data=get_calendar_data(resources_availability_model, '#257e4a') )
 
-    @expose('/bookings/<int:project_id>')
+    @expose('/<int:project_id>/bookings')
     # @has_access
     def bookings(self, project_id):
         # Requests for a Project resources
-        return self.render_template('test.html',
-                cal_header='project(%r) Resource Request/Booking Chart' % project_id,
+        return self.render_template('calendar.html',
+                project =  get_project_item(project_id),
+                cal_header='Booking Requests',
                 cal_data=get_calendar_data(resources_booking_model, 'grey'))
 
     @expose('/help/')
@@ -103,7 +141,7 @@ class project(BaseView):
         title = 'project(%r) Resource Availability Chart' % project_id
         data = get_calendar_data(resources_availability_model, 'green') +\
                     get_calendar_data(resources_booking_model, 'grey')
-        return self.render_template('test.html', cal_header=title, cal_data=data)
+        return self.render_template('calendar.html', cal_header=title, cal_data=data)
 
     @expose('/method5/')
     # @has_access
@@ -115,7 +153,7 @@ class project(BaseView):
                 ('title','url','2016-01-12T10:30:00','2016-01-12T12:30:00', ''),
                 ('title','url','2016-01-12T11:30:00','2016-01-12T12:30:00', ''),
                 ]
-        return self.render_template('test.html', 
+        return self.render_template('calendar.html', 
                 cal_header='Test - Calendar page',
                 cal_data=test_data)
 

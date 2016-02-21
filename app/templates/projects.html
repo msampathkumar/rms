@@ -5,7 +5,7 @@
 <div class="row">
 {% for project in param1  %}
   <div class="col-sm-4 well">
-  <a href="/project/summary/{{project.id}}"><h3>{{project.name|title}}</h3></a>
+      <a href="{{ url_for('project.summary', project_id=project.id) }}" ><h3>{{project.name|title}}</h3></a>
   <p>Description : {{project.description}}</p>
     <div class="btn-group btn-group-justified">
     <a href="{{ url_for('project.summary', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Project Home</a>

@@ -17,9 +17,17 @@
 {% endblock %}
 
 
-
-
 {% block content %}
+<!-- project name, description -->
+<div class="well">
+<a href="{{ url_for('project.summary', project_id=project.id) }}" ><h1>{{project.name|title}}</h1></a>
+<p>Description : {{project.description}}</p>
+<a href="{{ url_for('project.summary', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Project Home</a>
+<a href="{{ url_for('project.availability', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Availability</a>
+<a href="{{ url_for('project.bookings', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Booking</a>
+</div></br>
+
+
 <script>
     $(document).ready(function() {
         $('#calendar').fullCalendar({
@@ -60,10 +68,10 @@
     }
 </style>
 
-<h2> Project :: {{ cal_header|safe }}  </h2>
+<h3> {{ cal_header|safe|title }}  </h3>
 <div id='calendar'></div>
 </hr>
-
+<!--
 <p>hello world !</p>
 <pre>
 {% for title,url,start,end,color in cal_data  %}
@@ -76,5 +84,5 @@
     },
 {% endfor %}
 </pre>
-
+-->
 {% endblock %}
