@@ -9,3 +9,5 @@ env
 venv
 *.sublime*
 *.swp
+app/static/c3/*
+app/static/d3/*
