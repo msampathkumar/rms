@@ -1,5 +1,5 @@
 from flask.ext.appbuilder import AppBuilder, BaseView, expose, has_access
-from flask import flash, render_template
+from flask import flash, render_template, jsonify
 from flask_appbuilder import SimpleFormView
 from flask.ext.babelpkg import lazy_gettext as _
 
@@ -60,7 +60,16 @@ def get_project_details(project_id):
             project_users, # project user
             ]
 
-
+def get_graph_data(model_name, color_code='#257e4a'):
+    db_data = get_model_data(model_name)
+    data = [
+            (item.id,'', \
+                item.start_time.strftime("%Y-%m-%dT%H:%M:%S"), \
+                item.end_time.strftime("%Y-%m-%dT%H:%M:%S"), \
+                color_code, # color
+                ) \
+            for item in db_data]
+    return data
 
 def get_calendar_data(model_name, color_code='#257e4a'):
     db_data = get_model_data(model_name)
@@ -131,6 +140,23 @@ class project(BaseView):
     # @has_access
     def help(self):
         return self.render_template('help.html')
+
+    @expose('/test/')
+    # @has_access
+    def test(self):
+        import json
+        graph_data = [
+              [20130102, 100, 100],
+              [20130103, 200, 300],
+              [20130104, 300, 200],
+              [20130105, 250, 350],
+              [20130106, 150, 450],
+            ]
+        return self.render_template('graph.html',
+                graph_header='Availability Chart',
+                #graph_data=get_calendar_data(resources_availability_model, '#257e4a')
+                graph_data=graph_data
+                )
 
     @expose('/method4/<int:project_id>')
     # @has_access
@@ -206,7 +232,8 @@ appbuilder.add_view(project, "Projects", href='/project/all', category='stakehol
 # appbuilder.add_view(project, "Summary", href='/project/summary/12', category='stakeholders') # internal
 # appbuilder.add_link("Availability", href='/project/availability/001', category='stakeholders') # internal
 # appbuilder.add_link("Bookings", href='/project/bookings/001', category='stakeholders') # internal
-appbuilder.add_link("Help", href='/project/help/', category='stakeholders')
+appbuilder.add_link("Help", href='/project/help/', category='Help')
+appbuilder.add_link("Test", href='/project/test/', category='Test')
 appbuilder.add_link("Method4", href='/project/method4/12', category='stakeholders')
 appbuilder.add_link("Method5", href='/project/method5', category='stakeholders')
 

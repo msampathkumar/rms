@@ -20,7 +20,7 @@ class projects_model(Model):
     description =  Column(String(500), nullable=False)
 
     def __repr__(self):
-        return 'Project:%s' % self.name
+        return 'Project(%s)' % self.id
 
 
 class resources_model(Model):
@@ -33,7 +33,7 @@ class resources_model(Model):
     project_name = relationship("projects_model")
 
     def __repr__(self):
-        return '%s:%s' % (self.project_name, self.name)
+        return '%s:(%s)' % (self.project_name, self.name)
 
 class resources_availability_model(Model):
     id = Column(Integer, primary_key=True)
@@ -46,7 +46,7 @@ class resources_availability_model(Model):
     resource_name = relationship('resources_model')
 
     def __repr__(self):
-        return 'ResourceAvailability:%s' % self.id
+        return 'Resource(%s)' % self.id
 
 class resources_booking_model(Model):
     id = Column(Integer, primary_key=True)
@@ -59,7 +59,7 @@ class resources_booking_model(Model):
     resource_name = relationship('resources_model')
 
     def __repr__(self):
-        return 'resources_model Booking id:%r>' % self.id
+        return 'Booking(%r)' % self.id
 
 
 class project_users_model(Model):
@@ -68,3 +68,6 @@ class project_users_model(Model):
     user_name = relationship("User")
     project_id = Column(Integer, ForeignKey('projects_model.id'), nullable=False)
     project_name = relationship("projects_model")
+
+    def __repr__(self):
+        return 'Project User(%r)' % self.id

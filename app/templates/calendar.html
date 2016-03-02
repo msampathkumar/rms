@@ -68,21 +68,37 @@
     }
 </style>
 
-<h3> {{ cal_header|safe|title }}  </h3>
+
+<div class="container">
+<h2> {{ cal_header|safe|title }}  </h2>
 <div id='calendar'></div>
 </hr>
-<!--
-<p>hello world !</p>
-<pre>
-{% for title,url,start,end,color in cal_data  %}
-    {
-    title: {{title}}
-    url: {{url}}
-    start: {{start}}
-    end: {{end}}
-    color: {{color}}
-    },
-{% endfor %}
-</pre>
--->
+
+
+  <h2>Basic Table</h2>
+  <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p>            
+  <table class="table table-hover table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>title</th>
+        <th>url</th>
+        <th>start</th>
+        <th>end</th>
+        <th>color</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for title,url,start,end,color in cal_data  %}
+      <tr>
+        <th>{{title}}</th>
+        <th>{{url}}</th>
+        <th>{{start}}</th>
+        <th>{{end}}</th>
+        <th>{{color}}</th>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
 {% endblock %}
