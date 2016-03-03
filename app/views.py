@@ -12,21 +12,27 @@ from app import db, appbuilder
 from models import projects_model, resources_model, User
 from models import project_users_model, resources_availability_model, resources_booking_model
 
+from sqlalchemy import func
+
+import datetime
+
 #
 #  Custome views/reports
 #
 
-def get_model_data(model_name):
+def get_model_data(db_model):
     # fetches all the data in table
-    return db.session.query(model_name).all()
+    return db.session.query(db_model).all()
 
-def get_model_item(model_name, id=1):
+
+def get_model_item(db_model, id=1):
     # fetches one item as per index id
-    q = db.session.query(model_name).filter(model_name.id==id).all()
+    q = db.session.query(db_model).filter(db_model.id==id).all()
     if q:
         return q[0] # id always unique  - only item will be there
     else:
         return 
+
 
 def get_project_item(project_id):
     return get_model_item(projects_model, project_id)
@@ -47,6 +53,7 @@ def get_project_users(project_id):
     # return data
     return new
 
+
 def get_project_details(project_id):
     '''
     Returns :
@@ -60,8 +67,9 @@ def get_project_details(project_id):
             project_users, # project user
             ]
 
-def get_graph_data(model_name, color_code='#257e4a'):
-    db_data = get_model_data(model_name)
+
+def get_calendar_data(db_model, color_code='#257e4a'):
+    db_data = get_model_data(db_model)
     data = [
             (item.id,'', \
                 item.start_time.strftime("%Y-%m-%dT%H:%M:%S"), \
@@ -71,16 +79,32 @@ def get_graph_data(model_name, color_code='#257e4a'):
             for item in db_data]
     return data
 
-def get_calendar_data(model_name, color_code='#257e4a'):
-    db_data = get_model_data(model_name)
-    data = [
-            (item.id,'', \
-                item.start_time.strftime("%Y-%m-%dT%H:%M:%S"), \
-                item.end_time.strftime("%Y-%m-%dT%H:%M:%S"), \
-                color_code, # color
-                ) \
-            for item in db_data]
-    return data
+
+
+
+def get_model_group_count(db_model):
+    # 
+    my_group_by_col = func.Date(db_model.start_time)
+    start_date_01 = datetime.datetime(2016, 1, 1, 0, 0)
+    start_date_02 = datetime.datetime(2016, 1, 29, 0, 0)
+    sam = db.session.query(my_group_by_col, func.count(my_group_by_col)) \
+        .filter(my_group_by_col >= start_date_01) \
+        .filter(my_group_by_col < start_date_02) \
+        .group_by(my_group_by_col)
+    
+    return sam.all()
+
+
+def get_model_group_count_dict(db_model=resources_availability_model):
+    return { x:y for x,y in get_model_group_count(db_model)}
+
+
+def get_monthly_supply_demand():
+    #
+    supply = get_model_group_count_dict(resources_availability_model)
+    demand = get_model_group_count_dict(resources_booking_model)
+    all_dates = set(supply.keys() + demand.keys())
+    return [ (x, supply.get(x,0), demand.get(x,0)) for x in all_dates]
 
 
 class project(BaseView):
@@ -145,15 +169,9 @@ class project(BaseView):
     # @has_access
     def test(self):
         import json
-        graph_data = [
-              [20130102, 100, 100],
-              [20130103, 200, 300],
-              [20130104, 300, 200],
-              [20130105, 250, 350],
-              [20130106, 150, 450],
-            ]
+        graph_data = get_monthly_supply_demand()
         return self.render_template('graph.html',
-                graph_header='Availability Chart',
+                graph_header='Availability (Supply & Demand) Requests',
                 #graph_data=get_calendar_data(resources_availability_model, '#257e4a')
                 graph_data=graph_data
                 )

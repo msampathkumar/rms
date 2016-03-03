@@ -24,13 +24,12 @@
     var chart = c3.generate({
         data: {
             x: 'x',
-            xFormat: '%Y%M%D', // 'xFormat' can be used as custom format of 'x'
+            //xFormat: '%Y%m%d',
             rows: [
-              ['x', 'available', 'requested'],
-              [20130101, 30, 20],
-
-              {% for each in graph_data %}
-                  {{each}},
+              ['x', 'Available', 'Requested'],
+              <!--graph data here-->
+              {% for a,b,c in graph_data %}
+              ['{{a}}',{{b}},{{c}}],
               {% endfor %}
               ]
         },
@@ -49,9 +48,10 @@
 
 
 <div class="container">
-{% for each in graph_data %}
-  {{each}},
-{% endfor %}
+hello world !!! 
+              {% for each in graph_data %}
+                  <p>{{each}}</p>,
+              {% endfor %}
 
 </div>
 
