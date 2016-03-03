@@ -82,27 +82,35 @@ def get_calendar_data(db_model, color_code='#257e4a'):
 
 
 
-def get_model_group_count(db_model):
+def get_model_group_count(db_model, project_id=0):
     # 
     my_group_by_col = func.Date(db_model.start_time)
     start_date_01 = datetime.datetime(2016, 1, 1, 0, 0)
     start_date_02 = datetime.datetime(2016, 1, 29, 0, 0)
-    sam = db.session.query(my_group_by_col, func.count(my_group_by_col)) \
-        .filter(my_group_by_col >= start_date_01) \
+    sam = db.session.query(my_group_by_col, func.count(my_group_by_col))
+    if project_id != 0:
+        sam = sam.filter(resources_model.project_id == project_id)
+        if db_model.__name__ == 'resources_availability_model':
+            sam = sam.filter(resources_availability_model.resource_id == resources_model.id)
+        if db_model.__name__ == 'resources_booking_model':
+            sam = sam.filter(resources_booking_model.resource_id == resources_model.id)
+    sam = sam.filter(my_group_by_col >= start_date_01) \
         .filter(my_group_by_col < start_date_02) \
         .group_by(my_group_by_col)
     
     return sam.all()
 
 
-def get_model_group_count_dict(db_model=resources_availability_model):
-    return { x:y for x,y in get_model_group_count(db_model)}
+def get_model_group_count_dict(db_model=resources_availability_model, project_id=0):
+    return { x:y for x,y in get_model_group_count(db_model, project_id)}
 
 
-def get_monthly_supply_demand():
+def get_monthly_supply_demand(project_id=1):
     #
-    supply = get_model_group_count_dict(resources_availability_model)
-    demand = get_model_group_count_dict(resources_booking_model)
+    # project = 0 - refers that S&D is for entire project
+    #
+    supply = get_model_group_count_dict(resources_availability_model, project_id)
+    demand = get_model_group_count_dict(resources_booking_model, project_id)
     all_dates = set(supply.keys() + demand.keys())
     return [ (x, supply.get(x,0), demand.get(x,0)) for x in all_dates]
 

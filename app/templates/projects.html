@@ -1,20 +1,50 @@
-{% extends "appbuilder/base.html" %}
+{% extends "graph_base.html" %}
 {% block content %}
 <!-- starting -->
+<div clas="container">
+    <h2>{{graph_header}} Over-all Project Details</h2>
+    <div id="chart"></div>
+    <script type="text/javascript">
+      
+var chart = c3.generate({
+    data: {
+        x: 'x',
+//        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+        columns: [
+            ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+//            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
+            ['data1', 30, 200, 100, 400, 150, 250],
+            ['data2', 130, 340, 200, 500, 250, 350]
+        ]
+    },
+    axis: {
+        x: {
+            type: 'timeseries',
+            tick: {
+                format: '%Y-%m-%d'
+            }
+        }
+    }
+});
 
-<div class="row">
-{% for project in param1  %}
-  <div class="col-sm-4 well">
-      <a href="{{ url_for('project.summary', project_id=project.id) }}" ><h3>{{project.name|title}}</h3></a>
-  <p>Description : {{project.description}}</p>
-    <div class="btn-group btn-group-justified">
-    <a href="{{ url_for('project.summary', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Project Home</a>
-    <a href="{{ url_for('project.availability', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Availability</a>
-    <a href="{{ url_for('project.bookings', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Booking</a>
-    </div>
-  </div>
-{% endfor %}
+    </script>
 </div>
 
+<div clas="container">
+<h2> Projects Details </h2>
+  <div class="row">
+  {% for project in param1  %}
+    <div class="col-sm-4 well">
+      <a href="{{ url_for('project.summary', project_id=project.id) }}" ><h3>{{project.name|title}}</h3></a>
+    <p>Description : {{project.description}}</p>
+      <div class="btn-group btn-group-justified">
+      <a href="{{ url_for('project.summary', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Project Home</a>
+      <a href="{{ url_for('project.availability', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Availability</a>
+      <a href="{{ url_for('project.bookings', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Booking</a>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+</div>
 <!-- ending -->
 {% endblock %}
