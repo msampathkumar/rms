@@ -1,4 +1,4 @@
-{% extends 'appbuilder/baselayout.html' %}
+{% extends 'project_graph_base.html' %}
 
 {% block head_css %}
 {{ super() }}
@@ -18,13 +18,30 @@
 
 
 {% block content %}
-<!-- project name, description -->
+<!-- project nav bar -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{{ url_for('project.all_projects') }}">project_details.html</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="{{ url_for('project.summary', project_id=project.id) }}"> {{project.name|title}} </a>
+      </li>
+      <li>
+        <a href="{{ url_for('project.availability', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Availability</a>
+      </li>
+      <li>
+        <a href="{{ url_for('project.bookings', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Booking</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- project description -->
 <div class="well">
-<a href="{{ url_for('project.summary', project_id=project.id) }}" ><h1>{{project.name|title}}</h1></a>
+<a href="{{ url_for('project.summary', project_id=project.id) }}"> <h3>{{project.name|title}}</h3> </a>
 <p>Description : {{project.description}}</p>
-<a href="{{ url_for('project.summary', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Project Home</a>
-<a href="{{ url_for('project.availability', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Availability</a>
-<a href="{{ url_for('project.bookings', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Booking</a>
 </div></br>
 
 

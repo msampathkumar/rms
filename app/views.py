@@ -55,11 +55,7 @@ def get_project_users(project_id):
 
 
 def get_project_details(project_id):
-    '''
-    Returns :
-        * project 
-        * project - users
-    '''
+    #
     project = get_model_item(projects_model, project_id)
     project_users = get_project_users(project_id)
     return [
@@ -127,7 +123,10 @@ class project(BaseView):
         Links to all projects
         '''
         data = get_model_data(projects_model)
-        return self.render_template('projects.html',param1=data)
+        graph_data = get_monthly_supply_demand(project_id=0)
+        return self.render_template('projects.html',param1=data,
+            graph_header='Projects S&D VIEWS.py',
+            graph_data=graph_data)
 
     @expose('/<int:project_id>/summary')
     # @has_access
@@ -143,12 +142,15 @@ class project(BaseView):
         '''
 
         project, project_users = get_project_details(project_id)
+        graph_data = get_monthly_supply_demand(project_id=project_id)
         if not project:
             abort(404)
         return self.render_template('project_details.html',
             project=project, # get selected project
             users_list=project_users,
-            resources_list=[])
+            resources_list=[],
+            graph_header='Projects S&D VIEWS.py',
+            graph_data=graph_data)
     
     @expose('/<int:project_id>/availability')
     # @has_access
@@ -177,10 +179,9 @@ class project(BaseView):
     # @has_access
     def test(self):
         import json
-        graph_data = get_monthly_supply_demand()
+        graph_data = get_monthly_supply_demand(project_id=0)
         return self.render_template('graph.html',
                 graph_header='Availability (Supply & Demand) Requests',
-                #graph_data=get_calendar_data(resources_availability_model, '#257e4a')
                 graph_data=graph_data
                 )
 
