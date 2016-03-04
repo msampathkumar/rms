@@ -1,47 +1,33 @@
-{% extends "graph_base.html" %}
+{% extends "project_graph_base.html" %}
 {% block content %}
-<!-- starting -->
-<!-- project name, description -->
+<!-- project nav bar -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{{ url_for('project.all_projects') }}">project_details.html</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="{{ url_for('project.summary', project_id=project.id) }}"> {{project.name|title}} </a>
+      </li>
+      <li>
+        <a href="{{ url_for('project.availability', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Availability</a>
+      </li>
+      <li>
+        <a href="{{ url_for('project.bookings', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Booking</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- project description -->
 <div class="well">
-<a href="{{ url_for('project.summary', project_id=project.id) }}" ><h1>{{project.name|title}}</h1></a>
+<a href="{{ url_for('project.summary', project_id=project.id) }}"> <h3>{{project.name|title}}</h3> </a>
 <p>Description : {{project.description}}</p>
-<a href="{{ url_for('project.summary', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Project Home</a>
-<a href="{{ url_for('project.availability', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Availability</a>
-<a href="{{ url_for('project.bookings', project_id=project.id) }}" class="btn btn-primary:focus btn-sm">Booking</a>
 </div></br>
 
-
 <!-- project availability + demand calendar -->
-<h3>Availability + Demand calendar:</h3>
-<div class="row" style="width:90%;align:center;">
-  <p>* supply_group_by_date_count, demand_group_by_date_count # time line graph ## D3 </p>
-    <div id="chart"></div>
-<script type="text/javascript">
-
-var chart = c3.generate({
-    data: {
-    x: 'x',
-    //        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
-    columns: [
-      ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-    //            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
-      ['data1', 30, 200, 100, 400, 150, 250],
-      ['data2', 130, 340, 200, 500, 250, 350]
-    ]
-    },
-    axis: {
-    x: {
-      type: 'timeseries',
-      tick: {
-          format: '%Y-%m-%d'
-      }
-    }
-    }
-    });
-</script>
-</div>
-
-</div>
+{% include 'projects_graph.html'%}
 
 
 <!-- project users -->

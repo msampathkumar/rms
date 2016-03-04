@@ -1,0 +1,29 @@
+<div clas="container">
+    <h2>{{graph_header}}</h2>
+    <div id="chart"></div>
+    <script type="text/javascript">
+      
+    var chart = c3.generate({
+        data: {
+            x: 'x',
+            //xFormat: '%Y%m%d',
+            rows: [
+              ['x', 'Available', 'Requested'],
+              <!--graph data here-->
+              {% for a,b,c in graph_data %}
+              ['{{a}}',{{b}},{{c}}],
+              {% endfor %}
+              ]
+        },
+        axis: {
+            x: {
+                type: 'timeseries',
+                tick: {
+                    format: '%Y-%m-%d'
+                }
+            }
+        }
+    });
+
+    </script>
+</div>
